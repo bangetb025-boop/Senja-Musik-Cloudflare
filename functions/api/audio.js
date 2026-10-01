@@ -18,11 +18,7 @@ export async function onRequestGet({ request, env }) {
   api.searchParams.set("format", "json");
   api.searchParams.set("audioformat", "flac");
 
-  const result = await fetch(api, {
-    headers: {
-      "Accept": "application/json"
-    }
-  });
+  const result = await fetch(api);
 
   if (!result.ok) {
     return new Response("Jamendo API unavailable", { status: 502 });
@@ -48,7 +44,9 @@ export async function onRequestGet({ request, env }) {
   });
 
   if (!audio.ok && audio.status !== 206) {
-    return new Response("Audio unavailable", { status: audio.status });
+    return new Response("Audio unavailable", {
+      status: audio.status
+    });
   }
 
   const out = new Headers();
@@ -64,7 +62,9 @@ export async function onRequestGet({ request, env }) {
     "Accept-Ranges"
   ]) {
     const value = audio.headers.get(name);
-    if (value) out.set(name, value);
+    if (value) {
+      out.set(name, value);
+    }
   }
 
   out.set("Accept-Ranges", "bytes");
